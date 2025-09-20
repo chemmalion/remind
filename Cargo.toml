@@ -1,6 +1,9 @@
 [workspace]
+resolver = "2"
 
-members = ["crates/*"]
+members = [
+    "crates/server-model",
+]
 
-# Client apps are build using specific IDEs, e.g. Xcode for iOS.
+# Client apps are built using specific IDEs, e.g. Xcode for iOS.
 exclude = ["crates/client-ios-app"]
