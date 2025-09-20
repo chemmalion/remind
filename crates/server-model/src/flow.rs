@@ -54,7 +54,7 @@ pub struct ReminderFlow {
 enum Stage {
     Start,
     WaitingEmails { tag: EffId },
-    WaitingDoc    { tag: EffId, doc_id: String },
+    WaitingDoc    { tag: EffId, _doc_id: String },
     WaitingTelegram { tag: EffId },
     WaitingPhone    { tag: EffId },
     Done(Result<(), String>),
@@ -102,7 +102,7 @@ impl ReminderFlow {
                 // Example model logic: if we find a “Important:” email, fetch a doc it references
                 if let Some(doc_id) = pick_interesting_doc(&emails) {
                     let t2 = self.next();
-                    self.stage = Stage::WaitingDoc { tag: t2, doc_id: doc_id.clone() };
+                    self.stage = Stage::WaitingDoc { tag: t2, _doc_id: doc_id.clone() };
                     Command::Do(Effect::FetchDoc { doc_id, tag: t2 })
                 } else {
                     self.stage = Stage::Done(Ok(()));
@@ -147,7 +147,7 @@ impl ReminderFlow {
             // Timers or failures (example):
             (_, Event::Failed { error, .. }) => {
                 self.stage = Stage::Done(Err(error));
-                Command::Done(self.done().clone())
+                Command::Done(self.done())
             }
             (_, Event::TimerFired { .. }) => Command::Wait,
 
@@ -156,10 +156,10 @@ impl ReminderFlow {
         }
     }
 
-    pub fn done(&self) -> &Result<(), String> {
+    pub fn done(&self) -> Result<(), String> {
         match &self.stage {
-            Stage::Done(res) => res,
-            _ => &Ok(())
+            Stage::Done(res) => res.clone(),
+            _ => Ok(())
         }
     }
 }
