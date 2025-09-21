@@ -1,0 +1,8 @@
+[package]
+name = "server-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+server-model = { path = "../server-model" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time"] }

@@ -1,16 +1,15 @@
 // bin/server.rs (or another crate). This part is async/IO full-fat.
-use tokio::{sync::mpsc, select};
+use server_model::{Command, Document, Effect, Email, Event, ReminderFlow};
 use std::collections::HashMap;
-use server_model::{ReminderFlow, Command, Effect, Event, Email, Document, EffId};
+use tokio::sync::mpsc;
 
 #[tokio::main]
 async fn main() {
     // Multiple flows can be in-flight at once:
     let mut flows: HashMap<u64, ReminderFlow> = HashMap::new();
-    let mut next_flow_id = 1;
 
     // Start one flow:
-    let flow_id = { let id = next_flow_id; next_flow_id += 1; id };
+    let flow_id = 1u64;
     let mut flow = ReminderFlow::new("me@example.com", "is:unread", 123456789);
     let mut pending = vec![flow.start()];
     flows.insert(flow_id, flow);
@@ -42,7 +41,11 @@ fn spawn_effect(fid: u64, cmd: Command, evt_tx: mpsc::UnboundedSender<(u64, Even
     match cmd {
         Command::Do(eff) => {
             match eff {
-                Effect::FetchEmails { account, query, tag } => {
+                Effect::FetchEmails {
+                    account,
+                    query,
+                    tag,
+                } => {
                     tokio::spawn(async move {
                         // call your Gmail client here
                         let emails: Vec<Email> = gmail_fetch(account, query).await;
@@ -61,7 +64,11 @@ fn spawn_effect(fid: u64, cmd: Command, evt_tx: mpsc::UnboundedSender<(u64, Even
                         let _ = evt_tx.send((fid, Event::TelegramDone { tag }));
                     });
                 }
-                Effect::SetPhoneReminder { reminder_key, when, tag } => {
+                Effect::SetPhoneReminder {
+                    reminder_key,
+                    when,
+                    tag,
+                } => {
                     tokio::spawn(async move {
                         iphone_api_set(reminder_key, when).await;
                         let _ = evt_tx.send((fid, Event::PhoneDone { tag }));
@@ -70,7 +77,9 @@ fn spawn_effect(fid: u64, cmd: Command, evt_tx: mpsc::UnboundedSender<(u64, Even
                 Effect::StartTimer { fire_at, tag } => {
                     tokio::spawn(async move {
                         let now = std::time::Instant::now();
-                        if fire_at > now { tokio::time::sleep(fire_at - now).await; }
+                        if fire_at > now {
+                            tokio::time::sleep(fire_at - now).await;
+                        }
                         let _ = evt_tx.send((fid, Event::TimerFired { tag }));
                     });
                 }
@@ -82,10 +91,17 @@ fn spawn_effect(fid: u64, cmd: Command, evt_tx: mpsc::UnboundedSender<(u64, Even
 
 // --- mock async calls ---
 async fn gmail_fetch(_account: String, _query: String) -> Vec<Email> {
-    vec![Email { id: "e1".into(), subject: "Important: Check deadline".into(), body: "doc=doc-123".into() }]
+    vec![Email {
+        id: "e1".into(),
+        subject: "Important: Check deadline".into(),
+        body: "doc=doc-123".into(),
+    }]
 }
 async fn google_docs_fetch(id: String) -> Document {
-    Document { id, text: "deadline is today; please act".into() }
+    Document {
+        id,
+        text: "deadline is today; please act".into(),
+    }
 }
 async fn telegram_send(_chat_id: i64, _text: String) {}
 async fn iphone_api_set(_key: String, _when: std::time::Instant) {}

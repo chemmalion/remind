@@ -3,6 +3,7 @@ resolver = "2"
 
 members = [
     "crates/server-model",
+    "crates/server-app",
 ]
 
 # Client apps are built using specific IDEs, e.g. Xcode for iOS.
