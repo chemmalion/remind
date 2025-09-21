@@ -5,3 +5,9 @@ edition = "2021"
 
 [lib]
 path = "src/lib.rs"
+
+[dependencies]
+# keep empty
+
+[dev-dependencies]
+# keep empty (or move tests to according "tests" crate)

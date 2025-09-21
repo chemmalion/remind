@@ -1,0 +1,46 @@
+# Ban specific IO/system/time entrypoints
+disallowed-methods = [
+  # Filesystem
+  "std::fs::File::open",
+  "std::fs::File::create",
+  "std::fs::read",
+  "std::fs::read_to_string",
+  "std::fs::write",
+  "std::fs::remove_file",
+  "std::fs::remove_dir_all",
+  "std::fs::copy",
+  "std::fs::rename",
+  "std::fs::set_permissions",
+
+  # Processes / OS
+  "std::process::Command::new",
+  "std::process::exit",
+
+  # Networking
+  "std::net::TcpStream::connect",
+  "std::net::UdpSocket::bind",
+
+  # Threads / sleeping as crude timers
+  "std::thread::spawn",
+  "std::thread::sleep",
+
+  # Environment / globals
+  "std::env::var",
+  "std::env::set_var",
+
+  # System time access (model must be pure/logical time only)
+  "std::time::SystemTime::now",
+  "std::time::Instant::now",
+]
+
+# Also prevent accidental coupling via types
+disallowed-types = [
+  "std::fs::File",
+  "std::net::TcpStream",
+  "std::process::Command",
+  "std::process::Child",
+  "std::process::Stdio",
+  "std::thread::JoinHandle",
+  "std::sync::mpsc::Sender",
+  "std::sync::mpsc::Receiver",
+]

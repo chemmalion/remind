@@ -1,0 +1,23 @@
+name: model-purity
+on:
+  push:
+  pull_request:
+
+jobs:
+  purity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Workspace builds
+        run: cargo check --workspace
+
+      - name: Check server model purity (no deps + banned APIs)
+        run: bash ci/check_model_purity.sh server-model
