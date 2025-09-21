@@ -1,4 +1,7 @@
-// bin/server.rs (or another crate). This part is async/IO full-fat.
+// Integration layer for server application. This logic should be as simple as possible.
+// Ideally there should be only trivial integration and calls, all other business logic
+// should be placed in the model layer for testability.
+
 use server_model::{Command, Document, Effect, Email, Event, ReminderFlow};
 use std::collections::HashMap;
 use tokio::sync::mpsc;
