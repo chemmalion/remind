@@ -1,0 +1,7 @@
+[package]
+name = "server-model-tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+server-model = { path = "../../server-model" }

@@ -6,4 +6,8 @@
 
 pub mod flow;
 
-pub use flow::{Command, Document, EffId, Effect, Email, Event, ReminderFlow};
+pub use flow::{
+    CellRef, Command, ConfigDiscovery, EffId, Effect, EmailField, EmailSearchRequest, Event,
+    GoogleSheetRequest, ReminderFlow, TelegramRequest, CONFIG_DISCOVERY, CONFIG_ENV_VAR,
+    DEFAULT_CONFIG_PATHS,
+};
