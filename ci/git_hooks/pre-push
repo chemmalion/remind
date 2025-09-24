@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+if command -v cargo >/dev/null 2>&1; then
+    echo "Running cargo test (pre-push hook)..."
+    cargo test --workspace
+else
+    echo "cargo not found; skipping cargo test."
+fi

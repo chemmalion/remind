@@ -1,0 +1,24 @@
+name: PR Checks
+
+on:
+  pull_request:
+
+jobs:
+  lint-and-test:
+    name: Clippy and Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Run cargo clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Run cargo test
+        run: cargo test --workspace

@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+if command -v cargo >/dev/null 2>&1; then
+    echo "Running cargo clippy (pre-commit hook)..."
+    cargo clippy --workspace --all-targets --all-features -- -D warnings
+else
+    echo "cargo not found; skipping cargo clippy."
+fi
