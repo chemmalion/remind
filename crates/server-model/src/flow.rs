@@ -218,6 +218,12 @@ enum FlowError {
     StepFailure { step_index: usize, message: String },
 }
 
+impl Default for ReminderFlow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ReminderFlow {
     pub fn new() -> Self {
         Self {
